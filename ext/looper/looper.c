@@ -1,4 +1,4 @@
-#include<ruby.h>
+#include <ruby.h>
 #include "uv.h"
 
 //General
@@ -6,7 +6,7 @@
  do {                                                     \
   if (!(expr)) {                                          \
     fprintf(stderr,                                       \
-            "Assertion failed in %s on line %d: %s\n",    \
+            "[Looper Ext] Assertion failed in %s on line %d: %s\n",    \
             __FILE__,                                     \
             __LINE__,                                     \
             #expr);                                       \
@@ -16,13 +16,13 @@
 
 
 #define LOG_ERROR(msg)                                    \
-  fprintf(stderr, "%s\n", msg);
+  fprintf(stderr, "[Looper Ext] %s\n", msg);
 
 #define LOG_UV_ERROR(msg, uv_error)                       \
-  fprintf(stderr, "%s : %s \n", msg, uv_error);
+  fprintf(stderr, "[Looper Ext] %s : %s \n", msg, uv_error);
 
 #define LOG(msg)                                          \
-  fprintf(stdout, "%s\n", msg);
+  fprintf(stdout, "[Looper Ext] %s\n", msg);
 
 #define DEFAULT_TCP_PORT 8265
 
@@ -44,6 +44,7 @@ static void on_connection(uv_stream_t*, int status);
 static VALUE mLooper;
 static VALUE cEventLoop;
 static VALUE mTCPServer;
+static VALUE cTarget;
 
 static void on_connection(uv_stream_t *server, int status){
 
@@ -68,6 +69,7 @@ static void on_connection(uv_stream_t *server, int status){
 
   LOG("Connection Accepted !!!");
 
+  rb_funcall(cTarget, rb_intern("on_connection"),0,0);
   //r = uv_read_start(stream, alloc_buffer, after_read);
 }
 
@@ -75,7 +77,7 @@ static void on_connection(uv_stream_t *server, int status){
 /*
  *
  */
-static int tcp_server_start(){
+static int server_start(){
   struct sockaddr_in addr;
   int r;
 
@@ -100,7 +102,7 @@ static int tcp_server_start(){
     return 1;
   }
 
-  fprintf(stdout, "TCP Server started at port 8265 \n");
+  LOG("TCP Server started at port 8265 \n");
 
   return 0;
 }
@@ -118,12 +120,20 @@ static VALUE tcp_server_new(VALUE tcp_server_class){
 }
 
 //TCPServer.initialize implementation
-static VALUE tcp_serve_init(VALUE self){
+static VALUE tcp_server_init(VALUE self){
+  cTarget = self;
+  return self;
+}
+
+//TCPServer.start implementation
+static VALUE tcp_server_start(VALUE self){
   loop = uv_default_loop();
 
-  tcp_server_start();
+  server_start();
 
-  return uv_run(loop, UV_RUN_DEFAULT);
+  uv_run(loop, UV_RUN_DEFAULT);
+
+  return self;
 }
 
 
@@ -133,6 +143,7 @@ void Init_looper(){
 
   //Initialize TCPServer Module
   rb_define_singleton_method(mTCPServer, "new", tcp_server_new, 0);
-  rb_define_method(mTCPServer, "initialize", tcp_serve_init, 0);
+  rb_define_method(mTCPServer, "initialize", tcp_server_init, 0);
+  rb_define_method(mTCPServer, "start", tcp_server_start, 0);
 }
 
