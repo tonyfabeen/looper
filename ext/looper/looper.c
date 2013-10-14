@@ -57,7 +57,6 @@ static void on_server_close(uv_handle_t *handle);
 
 ///Ruby Stuff
 static VALUE mLooper;
-static VALUE cEventLoop;
 static VALUE mTCPServer;
 static VALUE cTarget;
 
@@ -203,7 +202,6 @@ static int server_start(){
 
   ASSERT(0 == uv_ip4_addr("0.0.0.0", DEFAULT_TCP_PORT, &addr));
 
-  //server = (uv_handle_t *) &tcpServer;
   r = uv_tcp_init(loop, &tcpServer);
   if(r){
     LOG_ERROR("Socket Creation Error");
