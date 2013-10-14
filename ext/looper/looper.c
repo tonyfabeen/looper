@@ -69,7 +69,9 @@ static void on_connection(uv_stream_t *server, int status){
 
   LOG("Connection Accepted !!!");
 
-  rb_funcall(cTarget, rb_intern("on_connection"),0,0);
+  if(rb_respond_to(cTarget, rb_intern("on_connection"))){
+    rb_funcall(cTarget, rb_intern("on_connection"),0,0);
+  }
   //r = uv_read_start(stream, alloc_buffer, after_read);
 }
 
