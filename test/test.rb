@@ -6,6 +6,10 @@ class MyTCPServer
   def on_connection
     puts "[MyTCPServer] on connection "
   end
+
+  def on_data(data)
+    puts "Aqui tem Data: #{data}"
+  end
 end
 
 my_tcp_server = MyTCPServer.new

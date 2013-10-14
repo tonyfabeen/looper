@@ -149,6 +149,12 @@ static void read_buffer(uv_stream_t *handle,
   wr = (write_req_t *) malloc(sizeof *wr);
   wr->buf = uv_buf_init(buf->base, nread);
 
+  if(rb_respond_to(cTarget, rb_intern("on_data"))){
+    const char *buffer_data = buf->base;
+    VALUE data = rb_str_new2(buffer_data);
+    rb_funcall(cTarget, rb_intern("on_data"),1, data);
+  }
+
   if(uv_write(&wr->req, handle, &wr->buf, 1, write_buffer)){
     LOG_ERROR("uv_write failed");
   }
