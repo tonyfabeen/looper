@@ -54,6 +54,7 @@ static void write_buffer(uv_write_t *req, int status);
 static void after_shutdown(uv_shutdown_t *req, int status);
 static void on_close(uv_handle_t *peer);
 static void on_server_close(uv_handle_t *handle);
+static void emit_error(char* msg);
 
 ///Ruby Stuff
 static VALUE mLooper;
@@ -185,6 +186,10 @@ static void after_shutdown(uv_shutdown_t *req, int status){
 }
 
 static void on_close(uv_handle_t *peer){
+  if(rb_respond_to(cTarget, rb_intern("on_connection_closed"))){
+    rb_funcall(cTarget, rb_intern("on_connection_closed"),0, 0);
+  }
+
   free(peer);
 }
 
@@ -225,6 +230,12 @@ static int server_start(){
   return 0;
 }
 
+static void emit_error(char* msg){
+  if(rb_respond_to(cTarget, rb_intern("on_error"))){
+    VALUE data = rb_str_new2(msg);
+    rb_funcall(cTarget, rb_intern("on_error"),1, data);
+  }
+}
 
 //Initialize TCPServer module
 static VALUE tcp_server_new(VALUE tcp_server_class){
