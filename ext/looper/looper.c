@@ -34,12 +34,6 @@ static uv_loop_t *loop;
 static uv_handle_t *server;
 static uv_tcp_t tcpServer;
 
-typedef struct {
-  uv_write_t req;
-  uv_buf_t buf;
-} write_req_t;
-int server_closed;
-
 static void on_connection(uv_stream_t*, int status);
 
 static void alloc_buffer(uv_handle_t *handle,
@@ -103,7 +97,6 @@ static void read_buffer(uv_stream_t *handle,
     const uv_buf_t *buf){
 
   int i;
-  write_req_t *wr;
   uv_shutdown_t *req;
 
   if(nread < 0){
@@ -124,29 +117,6 @@ static void read_buffer(uv_stream_t *handle,
     free(buf->base);
     return;
   }
-
-  /*
-   * 'Q' quits the server
-   * 'QS' closes the stream
-   */
-  if(!server_closed){
-
-    for(i = 0; i < nread; i++){
-      if(buf->base[i] == 'Q'){
-        if(i + 1 < nread && buf->base[i + 1] == 'S'){
-          free(buf->base);
-          uv_close((uv_handle_t *) handle, on_close);
-          return;
-        }else{
-          uv_close(server, on_server_close);
-          server_closed = 1;
-        }
-      }
-    }
-  }
-
-  wr = (write_req_t *) malloc(sizeof *wr);
-  wr->buf = uv_buf_init(buf->base, nread);
 
   if(rb_respond_to(cTarget, rb_intern("on_data"))){
     const char *buffer_data = buf->base;
