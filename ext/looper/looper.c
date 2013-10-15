@@ -50,7 +50,6 @@ static void read_buffer(uv_stream_t *handle,
     ssize_t nread,
     const uv_buf_t *buf);
 
-static void write_buffer(uv_write_t *req, int status);
 static void after_shutdown(uv_shutdown_t *req, int status);
 static void on_close(uv_handle_t *peer);
 static void on_server_close(uv_handle_t *handle);
@@ -155,29 +154,6 @@ static void read_buffer(uv_stream_t *handle,
     rb_funcall(cTarget, rb_intern("on_data"),1, data);
   }
 
-  if(uv_write(&wr->req, handle, &wr->buf, 1, write_buffer)){
-    LOG_ERROR("uv_write failed");
-  }
-}
-
-static void write_buffer(uv_write_t *req, int status){
-  write_req_t *wr;
-
-  /*free read/write buffer and request*/
-  wr = (write_req_t *) req;
-  free(wr->buf.base);
-  free(wr);
-
-  if(status == 0)
-    return;
-
-  LOG_UV_ERROR("uv_write error: ", uv_strerror(status));
-
-  if(status == UV_ECANCELED)
-    return;
-
-  ASSERT(status == UV_EPIPE);
-  uv_close((uv_handle_t *) req->handle, on_close);
 }
 
 
