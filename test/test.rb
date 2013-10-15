@@ -8,18 +8,20 @@ class MyTCPServer
   end
 
   def on_data(data)
-    puts "Incoming Data: #{data}"
+    puts "[MyTCPServer] Incoming Data: #{data}"
   end
 
   def on_error(description)
-    puts "Error Detected: #{description}"
+    puts "[MyTCPServer] Error Detected: #{description}"
   end
 
   def on_connection_closed
-    puts "Connection Closed"
+    puts "[MyTCPServer] Connection Closed"
   end
 
 end
 
 my_tcp_server = MyTCPServer.new
 my_tcp_server.start
+
+
