@@ -1,6 +1,6 @@
 require 'socket'
 
-s = TCPSocket.new 'localhost', 8265
+s = TCPSocket.new 'localhost', 8266
 10.times {s.write 'Testing.. '}
 
 while line = s.gets

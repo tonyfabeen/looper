@@ -27,6 +27,10 @@
 #define LOG(msg)                                          \
   fprintf(stdout, "[Looper Ext] %s\n", msg);
 
+#define LOG_INT(msg,param)                                          \
+  fprintf(stdout, "[Looper Ext] %s : %i\n", msg, param);
+
+
 #define DEFAULT_TCP_PORT 8265
 
 //
@@ -56,5 +60,6 @@ static void emit_error(char* msg);
 static VALUE mLooper;
 static VALUE mTCPServer;
 static VALUE cTarget;
+static int tcp_port;
 
 #endif

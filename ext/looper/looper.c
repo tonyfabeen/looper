@@ -98,7 +98,7 @@ static int server_start(){
   struct sockaddr_in addr;
   int r;
 
-  ASSERT(0 == uv_ip4_addr("0.0.0.0", DEFAULT_TCP_PORT, &addr));
+  ASSERT(0 == uv_ip4_addr("0.0.0.0", tcp_port, &addr));
 
   r = uv_tcp_init(loop, &tcpServer);
   if(r){
@@ -118,7 +118,7 @@ static int server_start(){
     return 1;
   }
 
-  LOG("TCP Server started at port 8265 \n");
+  LOG_INT("TCP Server started at port", tcp_port);
 
   return 0;
 }
@@ -142,7 +142,8 @@ static VALUE tcp_server_new(VALUE tcp_server_class){
 }
 
 //TCPServer.initialize implementation
-static VALUE tcp_server_init(VALUE self){
+static VALUE tcp_server_init(VALUE self, VALUE port){
+  tcp_port = FIX2INT(port);
   cTarget = self;
   return self;
 }
@@ -174,7 +175,7 @@ void Init_looper(){
 
   //Initialize TCPServer Module
   rb_define_singleton_method(mTCPServer, "new", tcp_server_new, 0);
-  rb_define_method(mTCPServer, "initialize", tcp_server_init, 0);
+  rb_define_method(mTCPServer, "initialize", tcp_server_init, 1);
   rb_define_method(mTCPServer, "start", tcp_server_start, 0);
 }
 

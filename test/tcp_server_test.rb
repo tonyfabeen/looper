@@ -21,7 +21,7 @@ class MyTCPServer
 
 end
 
-my_tcp_server = MyTCPServer.new
+my_tcp_server = MyTCPServer.new(8266)
 my_tcp_server.start
 
 
