@@ -1,5 +1,7 @@
 require 'mkmf'
 
+#$CFLAGS = CONFIG['CFLAGS'] = '-shared -fPIC'
+
 `cd ../deps/libuv; sh autogen.sh; sh configure; make; cd ../..`
 
 dir_config('uv', File.expand_path('../deps/libuv/include'),
