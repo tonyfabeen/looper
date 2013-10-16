@@ -1,4 +1,5 @@
 #include "looper.h"
+#include <signal.h>
 
 static void on_connection(uv_stream_t *server, int status){
 
@@ -157,8 +158,17 @@ static VALUE tcp_server_start(VALUE self){
   return self;
 }
 
+//Handle Ctrl-C Signal
+void ctrlc_handler(int signal_number){
+  LOG("Bye Bye.. ");
+  exit(signal_number);
+}
+
 
 void Init_looper(){
+
+  signal(SIGINT, ctrlc_handler);
+
   mLooper = rb_define_module("Looper");
   mTCPServer = rb_define_module_under(mLooper, "TCPServer");
 
