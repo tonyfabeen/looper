@@ -1,4 +1,7 @@
 *.o
+*.lo
+*.a
+*.la
 *.so
 *.log
 *.swp
