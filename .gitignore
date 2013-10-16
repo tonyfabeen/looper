@@ -5,4 +5,5 @@
 *.so
 *.log
 *.swp
-Makefile
+*.gem
+ext/looper/Makefile
