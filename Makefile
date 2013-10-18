@@ -8,7 +8,10 @@ build_libuv:
 	cd ext/deps/libuv && \
 	sh autogen.sh && \
 	sh configure && \
-	make
+	make && \
+	sudo make install && \
+	sudo cp /usr/local/lib/libuv* /usr/lib
+
 
 gem:
 	gem build looper.gemspec
