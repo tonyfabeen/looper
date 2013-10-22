@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "looper"
 
-  s.files        = Dir.glob("{ext}/**/*") + ["VERSION", "Makefile"]
+  s.files        = Dir.glob("{ext}/**/*") + ["VERSION"]
 
   s.extensions << 'ext/looper/extconf.rb'
 end

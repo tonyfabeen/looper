@@ -1,17 +1,8 @@
-clean_libuv:
-	cd ext/deps/libuv && \
-	make clean && \
-	sudo rm /usr/local/lib/libuv* && \
-	sudo rm /usr/lib/libuv*
-
 build_libuv:
-	cd ext/deps/libuv && \
+	cd ext/looper/libuv && \
 	sh autogen.sh && \
 	sh configure && \
-	make && \
-	sudo make install && \
-	sudo cp /usr/local/lib/libuv* /usr/lib
-
+	make
 
 gem:
 	gem build looper.gemspec
